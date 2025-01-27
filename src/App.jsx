@@ -2,12 +2,13 @@ import { useReducer } from "react";
 import DigitButton from "./DigitButton";
 import OprationButton from "./OprationButton";
 import KeyboardButtons from "./KeyboardButtons";
+import EvaluateButton from "./EvaluateButton";
 
 export const ACTIONS = {
-  ADD_DIGIT: "add-digit",
-  CHOOSE_OPERATION: "choose-operation",
+  ADD_DIGIT: "add-digit", // done
+  CHOOSE_OPERATION: "choose-operation", //done
   DELETE_DIGIT: "delete-digit",
-  CLEAR: "clear",
+  CLEAR: "clear", // done
   EVALUATE: "evaluate the operation",
 };
 
@@ -43,8 +44,8 @@ function reducer(state, { type, payload }) {
           operation: payload.operation,
         };
       }
-    //  true
-      if (state.previousOperand == null) {
+
+      if (state.previousOperand == null && state.currentOperand != null) {
         return {
           ...state,
           operation: payload.operation,
@@ -60,47 +61,56 @@ function reducer(state, { type, payload }) {
       };
 
     // ***********************************************
+    case ACTIONS.EVALUATE:
+      return {
+        ...state,
+        currentOperand: evaluate(state),
+      };
+
+    // ***********************************************
 
     case ACTIONS.CLEAR:
-      return {  };
+      return {};
 
     default:
       return state;
   }
 }
-function evaluate(previousOperand, operation, currentOperand) {
+function evaluate({ previousOperand, operation, currentOperand }) {
   const prev = parseFloat(previousOperand);
   const current = parseFloat(currentOperand);
   if (isNaN(prev) || isNaN(current)) {
-    let compilation = "";
-    switch (operation) {
-      case "+":
-        compilation = prev + current;
-        break;
-      case "-":
-        compilation = prev - current;
-        break;
-
-      case "*":
-        compilation = prev * current;
-        break;
-
-      case "÷":
-        compilation = prev / current;
-        break;
-      default:
-        return;
-    }
-    return compilation.toString();
+    return "";
   }
+  let compilation = "";
+  switch (operation) {
+    case "+":
+      compilation = prev + current;
+      break;
+    case "-":
+      compilation = prev - current;
+      break;
+
+    case "*":
+      compilation = prev * current;
+      break;
+
+    case "÷":
+      compilation = prev / current;
+      break;
+    default:
+      return;
+  }
+  return compilation.toString();
 }
+
 function App() {
   const [{ currentOperand, previousOperand, operation }, dispatch] = useReducer(
     reducer,
     {
-      currentOperand: "",
-      previousOperand: "",
-      operation: "",
+      currentOperand: null,
+      previousOperand: null,
+      operation: null,
     }
   );
   console.log(previousOperand);
@@ -139,7 +149,8 @@ function App() {
       <OprationButton operation="-" dispatch={dispatch} />
       <DigitButton digit="." dispatch={dispatch} />
       <DigitButton digit="0" dispatch={dispatch} />
-      <button className="span-two">=</button>
+      <EvaluateButton dispatch={dispatch} />
+      
     </div>
   );
 }

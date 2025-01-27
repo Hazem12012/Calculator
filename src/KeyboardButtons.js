@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { ACTIONS } from "./App";
 
-function KeyboardButtons( dispatch ) {
+function KeyboardButtons(dispatch) {
   useEffect(() => {
     function handleKeydown(event) {
       if (event.key >= 0 && event.key <= 9) {
@@ -30,8 +30,12 @@ function KeyboardButtons( dispatch ) {
           type: ACTIONS.CLEAR,
         });
       }
-
-      // console.log(event.key);
+      if (event.key === "Enter" || event.key === "=") {
+        dispatch({
+          type: ACTIONS.EVALUATE,
+        });
+      }
+      console.log(event.key);
     }
     window.addEventListener("keydown", handleKeydown);
     return () => {
